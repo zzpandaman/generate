@@ -15,77 +15,77 @@ import java.util.List;
 public class ${table.serviceImplName} implements ${table.serviceName}
 {
     @Autowired
-    private ${table.entityName}Mapper ${table.entityNameLow}Mapper;
+    private ${table.entityName}Mapper ${EntityName}Mapper;
 
     /**
      * 查询${table.entityName}
      */
     @Override
-    public ${table.entityName} select${table.entityName}ById(${pkType} ${table.pkField})
+    public ${table.entityName} select${table.entityName}ById(${pkType} ${pkName})
     {
-        return ${table.entityNameLow}Mapper.select${table.entityName}ById(${table.pkField});
+        return ${EntityName}Mapper.select${table.entityName}ById(${pkName});
     }
 
     /**
      * 查询${table.entityName}
      */
     @Override
-    public List<${table.entityName}> select${table.entityName}ByIds(${pkType}[] ${table.pkField}s)
+    public List<${table.entityName}> select${table.entityName}ByIds(${pkType}[] ${pkName}s)
     {
-        return ${table.entityNameLow}Mapper.select${table.entityName}ByIds(${table.pkField}s);
+        return ${EntityName}Mapper.select${table.entityName}ByIds(${pkName}s);
     }
 
     /**
      * 查询${table.entityName}列表
      */
     @Override
-    public List<${table.entityName}> select${table.entityName}List(${table.entityName} ${table.entityNameLow})
+    public List<${table.entityName}> select${table.entityName}List(${table.entityName} ${EntityName})
     {
-        return ${table.entityNameLow}Mapper.select${table.entityName}List(${table.entityNameLow});
+        return ${EntityName}Mapper.select${table.entityName}List(${EntityName});
     }
 
     /**
      * 新增${table.entityName}
      */
     @Override
-    public int insert${table.entityName}(${table.entityName} ${table.entityNameLow})
+    public int insert${table.entityName}(${table.entityName} ${EntityName})
     {
-        return ${table.entityNameLow}Mapper.insert${table.entityName}(${table.entityNameLow});
+        return ${EntityName}Mapper.insert${table.entityName}(${EntityName});
     }
 
     /**
      * 修改${table.entityName}
      */
     @Override
-    public int update${table.entityName}(${table.entityName} ${table.entityNameLow})
+    public int update${table.entityName}(${table.entityName} ${EntityName})
     {
-        return ${table.entityNameLow}Mapper.update${table.entityName}(${table.entityNameLow});
+        return ${EntityName}Mapper.update${table.entityName}(${EntityName});
     }
 
     /**
      * 批量删除${table.entityName}
      */
     @Override
-    public int delete${table.entityName}ByIds(${pkType}[] ${table.pkField}s)
+    public int delete${table.entityName}ByIds(${pkType}[] ${pkName}s)
     {
-        return ${table.entityNameLow}Mapper.delete${table.entityName}ByIds(${table.pkField}s);
+        return ${EntityName}Mapper.delete${table.entityName}ByIds(${pkName}s);
     }
 
     /**
      * 删除${table.entityName}信息
      */
     @Override
-    public int delete${table.entityName}ById(${pkType} ${table.pkField})
+    public int delete${table.entityName}ById(${pkType} ${pkName})
     {
-        return ${table.entityNameLow}Mapper.delete${table.entityName}ById(${table.pkField});
+        return ${EntityName}Mapper.delete${table.entityName}ById(${pkName});
     }
 
     /**
      * 条件删除${table.entityName}信息
      */
     @Override
-    public int delete${table.entityName}(${table.entityName} ${table.entityNameLow})
+    public int delete${table.entityName}(${table.entityName} ${EntityName})
     {
-        return ${table.entityNameLow}Mapper.delete${table.entityName}(${table.entityNameLow});
+        return ${EntityName}Mapper.delete${table.entityName}(${EntityName});
     }
 }

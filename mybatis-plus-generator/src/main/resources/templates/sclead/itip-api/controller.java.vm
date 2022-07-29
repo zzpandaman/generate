@@ -37,7 +37,7 @@ import com.skkj.common.core.web.page.TableDataInfo;
 #else
 @Controller
 #end
-@RequestMapping("/${table.businessName}")
+@RequestMapping("/${businessName}")
 #if(${kotlin})
 class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
 
@@ -49,76 +49,76 @@ public class ${table.controllerName} {
 #end
 
     @Autowired
-    private ${table.serviceName} ${table.entityNameLow}Service;
+    private ${table.serviceName} ${EntityName}Service;
 
     /**
      * 查询列表vice
      */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:list")
+    @PreAuthorize(hasPermi = "${permissionPrefix}:list")
     @GetMapping("/list")
-    public TableDataInfo list(${table.entityName} ${table.entityNameLow}) {
+    public TableDataInfo list(${table.entityName} ${EntityName}) {
         startPage();
-        List<${table.entityName}> list = ${table.entityNameLow}Service.select${table.entityName}List(${table.entityNameLow});
+        List<${table.entityName}> list = ${EntityName}Service.select${table.entityName}List(${EntityName});
         return getDataTable(list);
     }
 
     /**
      * 导出列表
      */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:export")
+    @PreAuthorize(hasPermi = "${permissionPrefix}:export")
     @PostMapping("/export")
-    public void export(HttpServletResponse response, ${table.entityName} ${table.entityNameLow}) throws IOException {
-        List<${table.entityName}> list = ${table.entityNameLow}Service.select${table.entityName}List(${table.entityNameLow});
+    public void export(HttpServletResponse response, ${table.entityName} ${EntityName}) throws IOException {
+        List<${table.entityName}> list = ${EntityName}Service.select${table.entityName}List(${EntityName});
         ExcelUtil<${table.entityName}> util = new ExcelUtil<${table.entityName}>(${table.entityName}.class);
-        util.exportExcel(response, list, "${table.businessName}");
+        util.exportExcel(response, list, "${businessName}");
     }
 
     /**
      * 获取详细信息
      */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:query")
-    @GetMapping(value = "/get/{${table.pkField}s}")
-    public AjaxResult getInfo(@PathVariable("${table.pkField}s") ${pkType}[] ${table.pkField}s) {
-        return AjaxResult.success(${table.entityNameLow}Service.select${table.entityName}ByIds(${table.pkField}s));
+    @PreAuthorize(hasPermi = "${permissionPrefix}:query")
+    @GetMapping(value = "/get/{${pkName}s}")
+    public AjaxResult getInfo(@PathVariable("${pkName}s") ${pkType}[] ${pkName}s) {
+        return AjaxResult.success(${EntityName}Service.select${table.entityName}ByIds(${pkName}s));
     }
 
     /**
      * 新增
      */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:add")
+    @PreAuthorize(hasPermi = "${permissionPrefix}:add")
     @PostMapping("/add")
-    public AjaxResult add(@RequestBody ${table.entityName} ${table.entityNameLow}) {
-        ${table.entityNameLow}.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
-        ${table.entityNameLow}.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
-        return toAjax(${table.entityNameLow}Service.insert${table.entityName}(${table.entityNameLow}));
+    public AjaxResult add(@RequestBody ${table.entityName} ${EntityName}) {
+        ${EntityName}.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
+        ${EntityName}.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+        return toAjax(${EntityName}Service.insert${table.entityName}(${EntityName}));
     }
 
     /**
      * 修改
      */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:edit")
+    @PreAuthorize(hasPermi = "${permissionPrefix}:edit")
     @PutMapping("/edit")
-    public AjaxResult edit(@RequestBody ${table.entityName} ${table.entityNameLow}) {
-        ${table.entityNameLow}.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
-        return toAjax(${table.entityNameLow}Service.update${table.entityName}(${table.entityNameLow}));
+    public AjaxResult edit(@RequestBody ${table.entityName} ${EntityName}) {
+        ${EntityName}.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+        return toAjax(${EntityName}Service.update${table.entityName}(${EntityName}));
     }
 
     /**
      * 删除
      */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:remove")
-    @DeleteMapping("/delete/{${table.pkField}s}")
-    public AjaxResult remove(@PathVariable ${pkType}[] ${table.pkField}s) {
-        return toAjax(${table.entityNameLow}Service.delete${table.entityName}ByIds(${table.pkField}s));
+    @PreAuthorize(hasPermi = "${permissionPrefix}:remove")
+    @DeleteMapping("/delete/{${pkName}s}")
+    public AjaxResult remove(@PathVariable ${pkType}[] ${pkName}s) {
+        return toAjax(${EntityName}Service.delete${table.entityName}ByIds(${pkName}s));
     }
 
     /**
     * 删除
     */
-    @PreAuthorize(hasPermi = "${table.permissionPrefix}:remove")
+    @PreAuthorize(hasPermi = "${permissionPrefix}:remove")
     @DeleteMapping("/delete")
-    public AjaxResult remove(@RequestBody ${table.entityName} ${table.entityNameLow}) {
-        return toAjax(${table.entityNameLow}Service.delete${table.entityName}(${table.entityNameLow}));
+    public AjaxResult remove(@RequestBody ${table.entityName} ${EntityName}) {
+        return toAjax(${EntityName}Service.delete${table.entityName}(${EntityName}));
     }
 }
 

@@ -12,40 +12,40 @@ public interface ${table.serviceName}
     /**
      * 查询${table.entityName}
      */
-    ${table.entityName} select${table.entityName}ById(${pkType} ${table.pkField});
+    ${table.entityName} select${table.entityName}ById(${pkType} ${pkName});
 
     /**
      * 查询${table.entityName}
      */
-    List<${table.entityName}> select${table.entityName}ByIds(${pkType}[] ${table.pkField}s);
+    List<${table.entityName}> select${table.entityName}ByIds(${pkType}[] ${pkName}s);
 
     /**
      * 查询${table.entityName}列表
      */
-    List<${table.entityName}> select${table.entityName}List(${table.entityName} ${table.entityNameLow});
+    List<${table.entityName}> select${table.entityName}List(${table.entityName} ${EntityName});
 
     /**
      * 新增${table.entityName}
      */
-    int insert${table.entityName}(${table.entityName} ${table.entityNameLow});
+    int insert${table.entityName}(${table.entityName} ${EntityName});
 
     /**
      * 修改${table.entityName}
      */
-    int update${table.entityName}(${table.entityName} ${table.entityNameLow});
+    int update${table.entityName}(${table.entityName} ${EntityName});
 
     /**
      * 批量删除${table.entityName}
      */
-    int delete${table.entityName}ByIds(${pkType}[] ${table.pkField}s);
+    int delete${table.entityName}ByIds(${pkType}[] ${pkName}s);
 
     /**
      * 删除${table.entityName}信息
      */
-    int delete${table.entityName}ById(${pkType} ${table.pkField});
+    int delete${table.entityName}ById(${pkType} ${pkName});
 
     /**
      * 条件删除${table.entityName}信息
      */
-    int delete${table.entityName}(${table.entityName} ${table.entityNameLow});
+    int delete${table.entityName}(${table.entityName} ${EntityName});
 }

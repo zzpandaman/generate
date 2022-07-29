@@ -53,18 +53,18 @@
 
     <select id="select${table.entityName}ById" parameterType="${pkType}" resultMap="BaseResultMap">
         <include refid="select${table.entityName}Vo"/>
-        where ${table.pkColumn} = #{${table.pkField}}
+        where ${pkColumn} = #{${pkName}}
     </select>
 
     <select id="select${table.entityName}ByIds" parameterType="${pkType}" resultMap="BaseResultMap">
         <include refid="select${table.entityName}Vo"/>
-        where ${table.pkColumn} in
-        <foreach item="${table.pkField}" collection="array" open="(" separator="," close=")">
-            #{${table.pkField}}
+        where ${pkColumn} in
+        <foreach item="${pkName}" collection="array" open="(" separator="," close=")">
+            #{${pkName}}
         </foreach>
     </select>
 
-    <insert id="insert${table.entityName}" parameterType="${table.entityName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$table.pkField"#end>
+    <insert id="insert${table.entityName}" parameterType="${table.entityName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$pkName"#end>
         insert into ${table.name}
         <trim prefix="(" suffix=")" suffixOverrides=",">
 #foreach($field in ${table.commonFields})
@@ -96,17 +96,17 @@
         update ${table.name}
         <trim prefix="SET" suffixOverrides=",">
 #foreach($field in ${table.commonFields})
-#if($field.name != $table.pkColumn)
+#if($field.name != $pkColumn)
             <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">$field.name = #{$field.propertyName},</if>
 #end
 #end
 #foreach($field in ${table.fields})
-#if($field.name != $table.pkColumn)
+#if($field.name != $pkColumn)
             <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">$field.name = #{$field.propertyName},</if>
 #end
 #end
         </trim>
-        where ${table.pkColumn} = #{${table.pkField}}
+        where ${pkColumn} = #{${pkName}}
     </update>
 
     <delete id="delete${table.entityName}" parameterType="${table.entityName}">
@@ -122,13 +122,13 @@
     </delete>
 
     <delete id="delete${table.entityName}ById" parameterType="${pkType}">
-        delete from ${table.name} where ${table.pkColumn} = #{${table.pkField}}
+        delete from ${table.name} where ${pkColumn} = #{${pkName}}
     </delete>
 
     <delete id="delete${table.entityName}ByIds" parameterType="${pkType}">
-        delete from ${table.name} where ${table.pkColumn} in
-        <foreach item="${table.pkField}" collection="array" open="(" separator="," close=")">
-            #{${table.pkField}}
+        delete from ${table.name} where ${pkColumn} in
+        <foreach item="${pkName}" collection="array" open="(" separator="," close=")">
+            #{${pkName}}
         </foreach>
     </delete>
 </mapper>

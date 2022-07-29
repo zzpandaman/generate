@@ -92,6 +92,17 @@
             <artifactId>spring-context</artifactId>
             <version>5.3.20</version>
         </dependency>
+        <!-- 使用sclead.itip-api 需要安装的本地依赖-->
+        <dependency>
+            <groupId>com.skkj</groupId>
+            <artifactId>itip-common-core</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.skkj</groupId>
+            <artifactId>itip-common-security</artifactId>
+            <version>2.5.0</version>
+        </dependency>
     </dependencies>
 
     <build>
