@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+#if(${enableCache})
+    <!-- 开启二级缓存 -->
+    <cache type="${cacheClassName}"/>
+
+#end
+#if(${baseResultMap})
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+        <id column="${field.name}" property="${field.propertyName}" />
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+        <result column="${field.name}" property="${field.propertyName}" />
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+        <result column="${field.name}" property="${field.propertyName}" />
+#end
+#end
+    </resultMap>
+
+#end
+#if(${baseColumnList})
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ${table.fieldNames},${commonFieldNames}
+    </sql>
+
+#end
+
+    <sql id="select${table.entityName}Vo">
+        select ${table.fieldNames}${commonFieldNames} from ${table.name}
+    </sql>
+
+    <select id="select${table.entityName}List" parameterType="${table.entityName}" resultMap="BaseResultMap">
+        <include refid="select${table.entityName}Vo"/>
+        <where>
+#foreach($field in ${table.commonFields})
+            <if test="$field.propertyName != null #if($field.propertyType == 'String' ) and $field.propertyName.trim() != ''#end"> and $field.name = #{$field.propertyName}</if>
+#end
+#foreach($field in ${table.fields})
+            <if test="$field.propertyName != null #if($field.propertyType == 'String' ) and $field.propertyName.trim() != ''#end"> and $field.name = #{$field.propertyName}</if>
+#end
+        </where>
+    </select>
+
+
+    <select id="select${table.entityName}ById" parameterType="${pkType}" resultMap="BaseResultMap">
+        <include refid="select${table.entityName}Vo"/>
+        where ${table.pkColumn} = #{${table.pkField}}
+    </select>
+
+    <select id="select${table.entityName}ByIds" parameterType="${pkType}" resultMap="BaseResultMap">
+        <include refid="select${table.entityName}Vo"/>
+        where ${table.pkColumn} in
+        <foreach item="${table.pkField}" collection="array" open="(" separator="," close=")">
+            #{${table.pkField}}
+        </foreach>
+    </select>
+
+    <insert id="insert${table.entityName}" parameterType="${table.entityName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$table.pkField"#end>
+        insert into ${table.name}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($field in ${table.commonFields})
+#if($field.name != $pkColumn || !$isKeyIdentityFlag)
+            <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">$field.name,</if>
+#end
+#end
+#foreach($field in ${table.fields})
+#if($field.name != $pkColumn || !$isKeyIdentityFlag)
+            <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">$field.name,</if>
+#end
+#end
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#foreach($field in ${table.commonFields})
+#if($field.name != $pkColumn || !$isKeyIdentityFlag)
+            <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">#{$field.propertyName},</if>
+#end
+#end
+#foreach($field in ${table.fields})
+#if($field.name != $pkColumn || !$isKeyIdentityFlag)
+            <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">#{$field.propertyName},</if>
+#end
+#end
+        </trim>
+    </insert>
+
+    <update id="update${table.entityName}" parameterType="${table.entityName}">
+        update ${table.name}
+        <trim prefix="SET" suffixOverrides=",">
+#foreach($field in ${table.commonFields})
+#if($field.name != $table.pkColumn)
+            <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">$field.name = #{$field.propertyName},</if>
+#end
+#end
+#foreach($field in ${table.fields})
+#if($field.name != $table.pkColumn)
+            <if test="$field.propertyName != null#if($field.columnType == 'STRING') and $field.propertyName != ''#end">$field.name = #{$field.propertyName},</if>
+#end
+#end
+        </trim>
+        where ${table.pkColumn} = #{${table.pkField}}
+    </update>
+
+    <delete id="delete${table.entityName}" parameterType="${table.entityName}">
+        delete from ${table.name}
+        <where>
+#foreach($field in ${table.commonFields})
+            <if test="$field.propertyName != null #if($field.propertyType == 'String' ) and $field.propertyName.trim() != ''#end"> and $field.name = #{$field.propertyName}</if>
+#end
+#foreach($field in ${table.fields})
+            <if test="$field.propertyName != null #if($field.propertyType == 'String' ) and $field.propertyName.trim() != ''#end"> and $field.name = #{$field.propertyName}</if>
+#end
+        </where>
+    </delete>
+
+    <delete id="delete${table.entityName}ById" parameterType="${pkType}">
+        delete from ${table.name} where ${table.pkColumn} = #{${table.pkField}}
+    </delete>
+
+    <delete id="delete${table.entityName}ByIds" parameterType="${pkType}">
+        delete from ${table.name} where ${table.pkColumn} in
+        <foreach item="${table.pkField}" collection="array" open="(" separator="," close=")">
+            #{${table.pkField}}
+        </foreach>
+    </delete>
+</mapper>

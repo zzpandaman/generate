@@ -1,0 +1,51 @@
+package ${package.Service};
+
+import java.util.List;
+import ${package.Entity}.${entity};
+
+/**
+ * @author ${author}
+ * @since ${date}
+ */
+public interface ${table.serviceName}
+{
+    /**
+     * 查询${table.entityName}
+     */
+    ${table.entityName} select${table.entityName}ById(${pkType} ${table.pkField});
+
+    /**
+     * 查询${table.entityName}
+     */
+    List<${table.entityName}> select${table.entityName}ByIds(${pkType}[] ${table.pkField}s);
+
+    /**
+     * 查询${table.entityName}列表
+     */
+    List<${table.entityName}> select${table.entityName}List(${table.entityName} ${table.entityNameLow});
+
+    /**
+     * 新增${table.entityName}
+     */
+    int insert${table.entityName}(${table.entityName} ${table.entityNameLow});
+
+    /**
+     * 修改${table.entityName}
+     */
+    int update${table.entityName}(${table.entityName} ${table.entityNameLow});
+
+    /**
+     * 批量删除${table.entityName}
+     */
+    int delete${table.entityName}ByIds(${pkType}[] ${table.pkField}s);
+
+    /**
+     * 删除${table.entityName}信息
+     */
+    int delete${table.entityName}ById(${pkType} ${table.pkField});
+
+    /**
+     * 条件删除${table.entityName}信息
+     */
+    int delete${table.entityName}(${table.entityName} ${table.entityNameLow});
+}

@@ -1,0 +1,91 @@
+package ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+/**
+ * @author ${author}
+ * @since ${date}
+ */
+@Service
+public class ${table.serviceImplName} implements ${table.serviceName}
+{
+    @Autowired
+    private ${table.entityName}Mapper ${table.entityNameLow}Mapper;
+
+    /**
+     * 查询${table.entityName}
+     */
+    @Override
+    public ${table.entityName} select${table.entityName}ById(${pkType} ${table.pkField})
+    {
+        return ${table.entityNameLow}Mapper.select${table.entityName}ById(${table.pkField});
+    }
+
+    /**
+     * 查询${table.entityName}
+     */
+    @Override
+    public List<${table.entityName}> select${table.entityName}ByIds(${pkType}[] ${table.pkField}s)
+    {
+        return ${table.entityNameLow}Mapper.select${table.entityName}ByIds(${table.pkField}s);
+    }
+
+    /**
+     * 查询${table.entityName}列表
+     */
+    @Override
+    public List<${table.entityName}> select${table.entityName}List(${table.entityName} ${table.entityNameLow})
+    {
+        return ${table.entityNameLow}Mapper.select${table.entityName}List(${table.entityNameLow});
+    }
+
+    /**
+     * 新增${table.entityName}
+     */
+    @Override
+    public int insert${table.entityName}(${table.entityName} ${table.entityNameLow})
+    {
+        return ${table.entityNameLow}Mapper.insert${table.entityName}(${table.entityNameLow});
+    }
+
+    /**
+     * 修改${table.entityName}
+     */
+    @Override
+    public int update${table.entityName}(${table.entityName} ${table.entityNameLow})
+    {
+        return ${table.entityNameLow}Mapper.update${table.entityName}(${table.entityNameLow});
+    }
+
+    /**
+     * 批量删除${table.entityName}
+     */
+    @Override
+    public int delete${table.entityName}ByIds(${pkType}[] ${table.pkField}s)
+    {
+        return ${table.entityNameLow}Mapper.delete${table.entityName}ByIds(${table.pkField}s);
+    }
+
+    /**
+     * 删除${table.entityName}信息
+     */
+    @Override
+    public int delete${table.entityName}ById(${pkType} ${table.pkField})
+    {
+        return ${table.entityNameLow}Mapper.delete${table.entityName}ById(${table.pkField});
+    }
+
+    /**
+     * 条件删除${table.entityName}信息
+     */
+    @Override
+    public int delete${table.entityName}(${table.entityName} ${table.entityNameLow})
+    {
+        return ${table.entityNameLow}Mapper.delete${table.entityName}(${table.entityNameLow});
+    }
+}

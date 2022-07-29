@@ -1,0 +1,82 @@
+package ${package.Entity};
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.skkj.common.core.annotation.Excel;
+import com.skkj.common.core.web.domain.BaseEntity;
+#if(${swagger})
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#end
+#if(${entityLombokModel})
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+#if(${chainModel})
+import lombok.experimental.Accessors;
+#end
+#end
+
+/**
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${entityLombokModel})
+@Data
+#if(${chainModel})
+@Accessors(chain = true)
+#end
+#end
+#if(${superEntityClass})
+public class ${entity} extends ${superEntityClass}#if(${activeRecord})<${entity}>#end {
+#elseif(${activeRecord})
+public class ${entity} extends BaseEntity {
+#else
+public class ${entity} implements Serializable {
+#end
+
+    private static final long serialVersionUID = 1L;
+## ----------  BEGIN 字段循环遍历  ----------
+#foreach($field in ${table.fields})
+
+#if(!${field.keyFlag})
+#set($keyPropertyName=${field.propertyName})
+#end
+#if($field.columnType == 'DATE')
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "${field.comment}", width = 30, dateFormat = "yyyy-MM-dd")
+#else
+    @Excel(name = "${field.comment}")
+#end
+    private ${field.propertyType} ${field.propertyName};
+#end
+#if(${entityColumnConstant})
+  #foreach($field in ${table.fields})
+    public static final String ${field.name.toUpperCase()} = "${field.name}";
+  #end
+#end
+#if(${activeRecord})
+    @Override
+    protected Serializable pkVal() {
+  #if(${keyPropertyName})
+        return this.${keyPropertyName};
+  #else
+        return null;
+  #end
+    }
+
+#end
+#if(!${entityLombokModel})
+    @Override
+    public String toString() {
+        return "${entity}{" +
+  #foreach($field in ${table.fields})
+    #if($!{foreach.index}==0)
+        "${field.propertyName}=" + ${field.propertyName} +
+    #else
+        ", ${field.propertyName}=" + ${field.propertyName} +
+    #end
+  #end
+        "}";
+    }
+#end
+}
