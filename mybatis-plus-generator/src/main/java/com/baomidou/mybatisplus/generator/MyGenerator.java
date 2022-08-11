@@ -17,9 +17,9 @@ public class MyGenerator {
         "&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true";;
     private static final String username = "root";
     private static final String password = "123456";
-    private static String outputDir = "D:\\idea_workplace\\Itip-api-new\\itip-modules\\itip-tpm\\tpm-base\\src\\main\\java";
-    private static String parent = "com.skkj.tpm.base";
-    private static final String tableName = "tb_equipment_check_group";
+    private static final String outputDir = "D:\\idea_workplace\\Itip-api-new\\itip-modules\\itip-tpm\\tpm-maintain\\src\\main\\java";
+    private static final String parent = "com.skkj.tpm.maintain";
+    private static final String tableName = "tb_maintain_task_list_detail";
 
     public static void main(String[] args) {
         generator();
@@ -63,7 +63,7 @@ public class MyGenerator {
                 .beforeOutputFile((tableInfo, stringObjectMap) ->{
                     stringObjectMap.put("businessName",tableInfo.getName().substring(tableInfo.getName().lastIndexOf("_")+1));  //业务名
                     stringObjectMap.put("permissionPrefix" , stringObjectMap.get("businessName"));  //接口权限前缀
-                    stringObjectMap.put("EntityName",tableInfo.getEntityName().charAt(0)+tableInfo.getEntityName().substring(1));   //实例变量名
+                    stringObjectMap.put("EntityName",(char)(tableInfo.getEntityName().charAt(0)+32)+tableInfo.getEntityName().substring(1));   //实例变量名
                     String commonFieldNames = tableInfo.getCommonFields().stream()
                         .reduce("" , (res, e) -> res + ", " + e.getColumnName(), String::concat);
                     stringObjectMap.put("commonFieldNames",commonFieldNames.trim());    //拼接公共字段名
