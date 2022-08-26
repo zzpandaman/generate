@@ -1,0 +1,175 @@
+import React, { useRef, useState } from 'react'
+import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table'
+import { ${entity} } from './data.d'
+import { deleteById,list } from '@/services/tpm/${EntityName}'
+import UpdateForm from './components/UpdateForm'
+import CreateForm from './components/CreateForm'
+import { Button, Divider, message, Popconfirm } from 'antd'
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+
+// react 箭头函数式组件
+const ${entity}Index: React.FC = () => {
+    //state-新增表格可见性
+    const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false)
+    //state-修改表单可见性
+    const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false)
+    //state-修改表单行数据透传
+    const [row, setRow] = useState<${entity}>()
+    //proTable actionRef 属性
+    const actionRef = useRef<ActionType>()
+    //ref-选中的多选框 id
+    let rowKeys = useRef<any>([]);
+    //proTable rowSelection 属性
+    const rowSelection = {
+        onChange: (newSelectedRowKeys:any) => {
+            rowKeys.current = newSelectedRowKeys;
+        },
+    };
+    //proTable columns 属性
+    const columns: ProColumns<${entity}>[] = [
+        //公共字段
+#foreach($field in ${table.commonFields})
+        {
+            title: '${field.comment}',
+            dataIndex: '${field.propertyName}',
+            key: '${field.propertyName}',
+            hideInTable:false,
+            hideInSearch:true,
+            align:'center',
+        },
+#end
+        //其他字段
+#foreach($field in ${table.fields})
+        {
+            title: '${field.comment}',
+            dataIndex: '${field.propertyName}',
+            key: '${field.propertyName}',
+            hideInTable:false,
+            hideInSearch:true,
+            align:'center',
+        },
+#end
+        {
+            title: '操作',
+            dataIndex: 'option',
+            valueType: 'option',
+            width:'80',
+            fixed: 'right',
+            align:'center',
+            render: (_,record) => (
+                <>
+                    <Divider type='vertical' /> {/* 分隔符 */}
+                    <a
+                        onClick={() => {
+                            setRow(record)
+                            handleUpdateModalVisible(true)
+                        }}
+                    >
+                        修改
+                    </a>
+                    <Divider type='vertical' /> {/* 分隔符 */}
+                    <Popconfirm  title='是否要删除此行？'
+                                 onConfirm={async () => {
+                                     await handleRemove(record.${pkName});
+                                     actionRef.current?.reloadAndRest?.();
+                                 }}
+                    >
+                        <a style={{ color: '#f5222d' }}>删除</a>
+                    </Popconfirm>
+                </>
+            ),
+        },
+    ]
+
+    return (
+        <>
+            <ProTable<${entity}>
+                headerTitle='${table.comment}'
+                className='shadow'
+                scroll={{ x: 'max-content' }}
+                search={{
+                    labelWidth: 'auto',
+                }}
+                actionRef={actionRef}
+                rowKey='${pkName}'
+                request={async (params={}) => {
+                    const msg = await list(params);
+                    return {
+                        data: msg.data,
+                        success: true,
+                        total: msg.total,
+                    };
+                }}
+                columns={columns}
+                pagination={{
+                    pageSize: 10,
+                    showQuickJumper: true,
+                }}
+                rowSelection={{
+                    ...rowSelection,
+                }}
+                toolBarRender={() => [
+                    <Button type='primary' onClick={() => handleCreateModalVisible(true)}>
+                        <PlusOutlined /> 新增
+                    </Button>,
+                    <Popconfirm title='是否要删除选中的数据？'
+                                disabled={rowKeys.current?.length <= 0}
+                                onConfirm={async () => {
+                                    await handleRemove(rowKeys?.current);
+                                    actionRef.current?.reloadAndRest?.();
+                                }}
+                    >
+                        <Button type='primary' danger disabled={rowKeys.current?.length <= 0}>
+                            <DeleteOutlined />删除
+                        </Button>
+                    </Popconfirm>,
+                ]}
+            />
+
+            <CreateForm
+                onCancel={() => {
+                    handleCreateModalVisible(false);
+                    setRow(undefined);
+                }}
+                createModalVisible={createModalVisible}
+                actionRef={actionRef}
+            />
+
+            {row && Object.keys(row).length ? (
+                <UpdateForm
+                    onCancel={() => {
+                        handleUpdateModalVisible(false)
+                        setRow(undefined)
+                    }}
+                    updateModalVisible={updateModalVisible}
+                    values={row}
+                    actionRef={actionRef}
+                />
+            ) : null}
+        </>
+    )
+}
+
+export default ${entity}Index
+
+// async func-删除
+const handleRemove = async (id:any) => {
+    const hide = message.loading('正在删除')
+    try {
+        const msg = await deleteById(id)
+
+        if(msg.code == 200) {
+            hide()
+            message.success('删除成功');
+            return true
+        } else {
+            hide()
+            message.error('删除失败，请重试')
+            return false
+        }
+    } catch (error) {
+        hide()
+        message.error('删除失败，请重试')
+        return false
+    }
+}

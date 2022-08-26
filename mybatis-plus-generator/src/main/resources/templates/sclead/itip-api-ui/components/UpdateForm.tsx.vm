@@ -1,0 +1,123 @@
+import { Col, Form, Input, message, Modal, Row } from 'antd';
+import { ${entity} } from '../data.d';
+import { edit } from '@/services/tpm/${EntityName}'
+
+// 父组件 props 接口
+export interface UpdateFormProps {
+    onCancel: (flag?: boolean, formVals?: ${entity}) => void;
+    updateModalVisible: boolean;
+    values: Partial<${entity}>;
+    actionRef:any;
+}
+
+// form 布局属性
+const formLayout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+};
+
+// 字段信息 用于生成 form
+const formFields = [
+    //公共字段
+#foreach($field in ${table.commonFields})
+    {label:"${field.comment}",name:"${field.propertyName}",rules:true,hide:false},
+#end
+    //其他字段
+#foreach($field in ${table.fields})
+    {label:"${field.comment}",name:"${field.propertyName}",rules:true,hide:false},
+#end
+]
+
+// react 箭头函数式组件
+const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+    // form 的控制实例
+    const [baseForm] = Form.useForm();
+    // props 析构赋值
+    const {
+        onCancel: handleUpdateModalVisible,
+        updateModalVisible,
+        values,
+        actionRef,
+    } = props;
+
+    // async func-更新
+    const handleUpdate = async (fields: ${entity}) => {
+        try {
+            message.loading('正在更新')
+            const msg = await edit({ ...fields})
+            if(msg.code == 200) {
+                message.success('更新成功');
+                //关闭表单
+                handleUpdateModalVisible(false);
+                //重新加载表格
+                actionRef.current.reload();
+                return true
+            } else {
+                message.error('更新失败请重试！')
+                return false
+            }
+        } catch (error) {
+            message.error('更新失败请重试！')
+            return false
+        }
+    }
+
+    // 拼接 form
+    const getBaseFields = () => {
+        const children = [];
+        for (let i = 0; i < formFields.length; i++) {
+            let inner
+            // 根据 字段名 给 Form.Item 不同的渲染: Input Select 等
+            if (formFields[i].name == 'someFields'){
+                inner = <Input disabled={true} />
+            }else {
+                inner = <Input />
+            }
+            children.push(
+                // 一行为 24/span 列
+                <Col span={8} key={i} hidden={formFields[i].hide}>
+                    <Form.Item
+                        name={formFields[i].name}
+                        label={formFields[i].label}
+                        rules={[{required: formFields[i].rules}]}
+                    >
+                        {inner}
+                    </Form.Item>
+                </Col>,
+            );
+        }
+        return children;
+    };
+
+    return (
+        <Modal
+            width={1200}
+            bodyStyle={{
+                padding: '20px 20px 20px',
+                maxHeight:"650px",
+                overflowY:'auto',
+            }}
+            maskClosable={false} // 点击空白不关闭
+            destroyOnClose
+            title="${table.comment}"
+            visible={updateModalVisible}
+            onCancel={() => {
+                handleUpdateModalVisible();
+            }}
+            onOk={async () => handleUpdate({...values,...await baseForm.validateFields()})}
+            okText={"更新"}
+        >
+            <Form
+                autoComplete="off"
+                {...formLayout}
+                form={baseForm}
+                initialValues={{...values}}
+            >
+                // gutter 控制列之间的间隔
+                {<Row gutter={24}>{getBaseFields()}</Row>}
+            </Form>
+        </Modal>
+    );
+};
+
+export default UpdateForm;

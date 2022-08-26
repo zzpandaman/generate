@@ -52,7 +52,7 @@ public class ${table.controllerName} {
     private ${table.serviceName} ${EntityName}Service;
 
     /**
-     * 查询列表vice
+     * 查询列表
      */
     @PreAuthorize(hasPermi = "${permissionPrefix}:list")
     @GetMapping("/list")
@@ -104,7 +104,7 @@ public class ${table.controllerName} {
     }
 
     /**
-     * 删除
+     * id删除
      */
     @PreAuthorize(hasPermi = "${permissionPrefix}:remove")
     @DeleteMapping("/delete/{${pkName}s}")
@@ -113,7 +113,7 @@ public class ${table.controllerName} {
     }
 
     /**
-    * 删除
+    * 条件删除
     */
     @PreAuthorize(hasPermi = "${permissionPrefix}:remove")
     @DeleteMapping("/delete")

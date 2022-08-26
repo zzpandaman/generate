@@ -73,7 +73,19 @@ public abstract class AbstractTemplateEngine {
             if (StringUtils.isNotBlank(file.getPackageName())) {
                 filePath = filePath + File.separator + file.getPackageName();
             }
-            String fileName = filePath + File.separator + entityName + file.getFileName();
+            String fileName;
+            String inputFileName = Optional.ofNullable(file.getFileName()).orElse("");
+            String inputFileNamePrefix = inputFileName.split("\\.")[0];
+            int index = inputFileName.indexOf("." );
+            String inputFileNameSuffix = inputFileName.substring(index+1);
+            if ("entityName".equals(inputFileNamePrefix)) {
+                fileName = filePath + File.separator + entityName + inputFileNameSuffix;
+            }else if("lowerEntityName".equals(inputFileNamePrefix)){
+                String lowerEntityName = (char) (entityName.charAt(0) + 32) + entityName.substring(1);
+                fileName = filePath + File.separator + lowerEntityName + inputFileNameSuffix;
+            }else {
+                fileName = filePath + File.separator + inputFileName;
+            }
             outputFile(new File(fileName), objectMap, file.getTemplatePath(), file.isFileOverride());
         });
     }

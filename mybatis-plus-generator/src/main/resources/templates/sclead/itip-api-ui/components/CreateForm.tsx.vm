@@ -1,0 +1,128 @@
+import {Col, Form, Input, message, Modal, Row} from 'antd';
+import { ${entity} } from '../data.d';
+import { add } from '@/services/tpm/${EntityName}'
+
+// 父组件 props 接口
+export interface CreateFormProps {
+    onCancel: (flag?: boolean, formVals?: ${entity}) => void;
+    createModalVisible: boolean;
+    actionRef:any;
+}
+
+// form 布局属性
+const formLayout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+};
+
+// 字段信息 用于生成 form
+const formFields = [
+    //公共字段
+#foreach($field in ${table.commonFields})
+    {label:"${field.comment}",name:"${field.propertyName}",rules:true,hide:false},
+#end
+    //其他字段
+#foreach($field in ${table.fields})
+    {label:"${field.comment}",name:"${field.propertyName}",rules:true,hide:false},
+#end
+]
+
+// react 箭头函数式组件
+const CreateForm: React.FC<CreateFormProps> = (props) => {
+    // form 的控制实例
+    const [baseForm] = Form.useForm();
+    // props 析构赋值
+    const {
+        onCancel: handleCreateModalVisible,
+        createModalVisible,
+        actionRef,
+    } = props;
+
+    // 表单重置
+    const resetForm = () =>{
+        baseForm.resetFields();
+    }
+
+    // async func-添加
+    const handleAdd = async (fields: ${entity}) => {
+        try {
+            message.loading('正在添加');
+            const msg = await add({ ...fields})//... 代表“传播”操作符来传递整个道具对象
+            if(msg.code == 200) {
+                message.success('添加成功');
+                //表单重置
+                resetForm();
+                //关闭表单
+                handleCreateModalVisible(false);
+                //重新加载表格
+                actionRef.current.reload();
+            } else {
+                message.error('添加失败请重试！')
+            }
+        } catch (error) {
+            message.error('添加失败请重试！')
+        }
+    }
+
+
+    // 拼接 form
+    const getBaseFields = () => {
+        const children = [];
+        for (let i = 0; i < formFields.length; i++) {
+            let inner
+            // 根据 字段名 给 Form.Item 不同的渲染: Input Select 等
+            if (formFields[i].name == 'someFields'){
+                inner = <Input disabled={true} />
+            }else {
+                inner = <Input />
+            }
+            children.push(
+                // 一行为 24/span 列
+                <Col span={8} key={i} hidden={formFields[i].hide}>
+                    <Form.Item
+                        name={formFields[i].name}
+                        label={formFields[i].label}
+                        rules={[{required: formFields[i].rules}]}
+                    >
+                        {inner}
+                    </Form.Item>
+                </Col>,
+            );
+        }
+        return children;
+    };
+
+    return (
+        <Modal
+            width={1200}
+            bodyStyle={{
+                padding: '20px 20px 20px',
+                maxHeight:"650px",
+                overflowY:'auto',
+            }}
+            maskClosable={false}//点击空白不关闭
+            destroyOnClose
+            title="${table.comment}"
+            visible={createModalVisible}
+            onCancel={() => {
+                handleCreateModalVisible()
+            }}
+            onOk={async () => handleAdd({...await baseForm.validateFields()})}
+            okText={"新增"}
+        >
+            <Form
+                autoComplete="off"
+                {...formLayout}
+                form={baseForm}
+                // 提交失败自动滚动到第一个错误字段
+                scrollToFirstError={true}
+            >
+                // gutter 控制列之间的间隔
+                {<Row gutter={24}>{getBaseFields()}</Row>}
+            </Form>
+        </Modal>
+    );
+
+};
+
+export default CreateForm;

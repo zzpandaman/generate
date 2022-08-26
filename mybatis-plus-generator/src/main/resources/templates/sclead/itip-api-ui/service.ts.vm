@@ -1,0 +1,63 @@
+import request from '@/utils/request'
+
+// 查询列表
+export async function list(query?: any) {
+    return request('/${microServiceName}/${businessName}/list', {
+        method: 'get',
+        params: query,
+    })
+}
+
+// 导出列表
+export async function exportList(query?: any) {
+    return request('/${microServiceName}/${businessName}/export', {
+        method: 'post',
+        data: query,
+        responseType: 'blob',
+        parseResponse: false,
+        timeout: 120000,
+    })
+}
+
+// 获取详细信息
+export async function getByIds(ids: number) {
+    return request(`/${microServiceName}/${businessName}/${ids}`, {
+        method: 'get',
+    })
+}
+
+// 新增
+export async function add(data: any) {
+    return request('/${microServiceName}/${businessName}/add', {
+        method: 'post',
+        data,
+    })
+}
+
+// 修改
+export async function edit(data: any) {
+    return request('/${microServiceName}/${businessName}/edit', {
+        method: 'put',
+        data,
+    })
+}
+
+// id删除
+export async function deleteById(ids: number) {
+    return request(`/${microServiceName}/${businessName}/delete/${ids}`, {
+        method: 'delete',
+    })
+}
+
+// 条件删除
+export async function deleteByQo(data: any) {
+    return request('/${microServiceName}/${businessName}/delete', {
+        method: 'delete',
+        data,
+    })
+}
+
+
+
+
+
